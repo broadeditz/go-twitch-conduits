@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/broadeditz/go-twitch-conduits/pkg/transport"
 )
 
 // CreateConduitResponse is the response the Twitch API returns when creating a conduit
@@ -57,9 +59,9 @@ type TransportShard struct {
 	ID        string `json:"id"`
 	Status    string `json:"status,omitempty"`
 	Transport struct {
-		Method   string `json:"method"`
-		Callback string `json:"callback"`
-		Secret   string `json:"secret"`
+		Method   transport.Method `json:"method"`
+		Callback string           `json:"callback"`
+		Secret   string           `json:"secret"`
 	}
 }
 

@@ -45,7 +45,8 @@ type ChannelMessageEvent struct {
 		ID    string `json:"id"`
 		Info  string `json:"info"`
 	} `json:"badges"`
-	MessageType                 string      `json:"message_type"`
+	MessageType string `json:"message_type"`
+	// TODO: figure out types
 	Cheer                       interface{} `json:"cheer"`
 	Reply                       interface{} `json:"reply"`
 	ChannelPointsCustomRewardID interface{} `json:"channel_points_custom_reward_id"`

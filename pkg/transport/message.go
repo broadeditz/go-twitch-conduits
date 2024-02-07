@@ -12,8 +12,8 @@ type Subscription struct {
 		UserID            string `json:"user_id"`
 	} `json:"condition"`
 	Transport struct {
-		Method    conduit.TransportMethod `json:"method"`
-		SessionID string                  `json:"session_id"`
+		Method    string `json:"method"`
+		SessionID string `json:"session_id"`
 	} `json:"transport"`
 	CreatedAt string `json:"created_at"`
 	Cost      int    `json:"cost"`

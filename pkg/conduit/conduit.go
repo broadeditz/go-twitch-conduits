@@ -54,13 +54,16 @@ type AssignConduitTransportRequest struct {
 
 // TransportShard is a shard of a conduit
 type TransportShard struct {
-	ID        string `json:"id"`
-	Status    string `json:"status,omitempty"`
-	Transport struct {
-		Method   TransportMethod `json:"method"`
-		Callback string          `json:"callback"`
-		Secret   string          `json:"secret"`
-	}
+	ID        string          `json:"id"`
+	Status    string          `json:"status,omitempty"`
+	Transport TransportUpdate `json:"transport"`
+}
+
+type TransportUpdate struct {
+	Method    TransportMethod `json:"method"`
+	Callback  string          `json:"callback,omitempty"`
+	SessionID string          `json:"session_id,omitempty"`
+	Secret    string          `json:"secret,omitempty"`
 }
 
 type AssignConduitTransportResponse struct {
@@ -93,4 +96,52 @@ func (t *TwitchAPI) AssignConduitTransport(request AssignConduitTransportRequest
 	}
 
 	return &response, nil
+}
+
+type EventSubscribeRequest struct {
+	Type      EventType `json:"type"`
+	Version   string    `json:"version"`
+	Condition struct {
+		BroadcasterUserID string `json:"broadcaster_user_id"`
+		ModeratorUserID   string `json:"moderator_user_id,omitempty"`
+		UserID            string `json:"user_id,omitempty"`
+	} `json:"condition"`
+	Transport TransportUpdate `json:"transport"`
+}
+
+type EventSubscribeResponse struct {
+	// TODO: implement
+}
+
+func (t *TwitchAPI) EventSubscribe(request EventSubscribeRequest) (*EventSubscribeResponse, error) {
+	// POST to 'https://api.twitch.tv/helix/eventsub/subscriptions' with authorization & client ID headers, request body
+	body := new(bytes.Buffer)
+	err := json.NewEncoder(body).Encode(request)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := t.Do(http.MethodPost, "https://api.twitch.tv/helix/eventsub/subscriptions", body)
+	defer res.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, errors.New(fmt.Sprintf("Event Subscribe unexpected status code: %d", res.StatusCode))
+	}
+
+	data := make([]byte, res.ContentLength)
+	res.Body.Read(data)
+
+	fmt.Printf("%+v\n", string(data))
+
+	// TODO: implement
+	//var response EventSubscribeResponse
+	//err = json.NewDecoder(res.Body).Decode(&response)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	return nil, nil
 }

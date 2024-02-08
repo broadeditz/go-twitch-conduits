@@ -1,11 +1,9 @@
-package transport
+package conduit
 
 import (
 	"encoding/json"
 	"errors"
 	"io"
-
-	"github.com/broadeditz/go-twitch-conduits/pkg/conduit"
 )
 
 var (
@@ -20,7 +18,7 @@ func ParseChannelMessage(data []byte) (ChannelMessage, error) {
 }
 
 // ParseMessageType parses the type from an event, without having to decode the entire message
-func ParseMessageType(body io.Reader) (conduit.EventType, error) {
+func ParseMessageType(body io.Reader) (EventType, error) {
 	d := json.NewDecoder(body)
 
 	err := expectToken(d, json.Delim('{'))
@@ -34,7 +32,7 @@ func ParseMessageType(body io.Reader) (conduit.EventType, error) {
 		if !errors.Is(err, errValueNotFound) {
 			return "", err
 		}
-		return conduit.EventTypeNull, nil
+		return EventTypeNull, nil
 	}
 
 	// make sure the subscription element is an object
@@ -49,7 +47,7 @@ func ParseMessageType(body io.Reader) (conduit.EventType, error) {
 		if !errors.Is(err, errValueNotFound) {
 			return "", err
 		}
-		return conduit.EventTypeNull, nil
+		return EventTypeNull, nil
 	}
 
 	// get the type value
@@ -58,7 +56,7 @@ func ParseMessageType(body io.Reader) (conduit.EventType, error) {
 		return "", err
 	}
 
-	eventType := conduit.ParseEventType(t.(string))
+	eventType := ParseEventType(t.(string))
 
 	return eventType, nil
 }

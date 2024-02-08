@@ -1,12 +1,10 @@
-package transport
-
-import "github.com/broadeditz/go-twitch-conduits/pkg/conduit"
+package conduit
 
 type Subscription struct {
-	ID        string            `json:"id"`
-	Status    string            `json:"status"`
-	Type      conduit.EventType `json:"type"`
-	Version   string            `json:"version"`
+	ID        string    `json:"id"`
+	Status    string    `json:"status"`
+	Type      EventType `json:"type"`
+	Version   string    `json:"version"`
 	Condition struct {
 		BroadcasterUserID string `json:"broadcaster_user_id"`
 		UserID            string `json:"user_id"`

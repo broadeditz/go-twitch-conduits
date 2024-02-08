@@ -1,11 +1,9 @@
-package transport
+package conduit
 
 import (
 	"bytes"
 	"io"
 	"testing"
-
-	"github.com/broadeditz/go-twitch-conduits/pkg/conduit"
 )
 
 func TestParseMessageType(t *testing.T) {
@@ -15,7 +13,7 @@ func TestParseMessageType(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    conduit.EventType
+		want    EventType
 		wantErr bool
 	}{
 		{
@@ -85,7 +83,7 @@ func TestParseMessageType(t *testing.T) {
 }`),
 				),
 			},
-			want:    conduit.EventTypeChannelMessage,
+			want:    EventTypeChannelMessage,
 			wantErr: false,
 		},
 		// TODO: Add test cases.

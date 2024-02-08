@@ -25,8 +25,9 @@ func (t *TwitchAPI) Do(method, url string, body io.Reader) (*http.Response, erro
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Client-ID", t.clientID)
+	req.Header.Set("Client-Id", t.clientID)
 	req.Header.Set("Authorization", "Bearer "+t.oauthToken)
+	req.Header.Set("Content-Type", "application/json")
 
 	return http.DefaultClient.Do(req)
 }

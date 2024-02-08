@@ -19,7 +19,7 @@ type CreateConduitResponse struct {
 // CreateConduit sends a request to the Twitch API to create a conduit with the given shard count
 func (t *TwitchAPI) CreateConduit(shardCount int) (*CreateConduitResponse, error) {
 	// POST to 'https://api.twitch.tv/helix/eventsub/conduits' with authorization & client ID headers, shard count in body
-	requestData, body := map[string]interface{}{
+	requestData, body := map[string]int{
 		"shard_count": shardCount,
 	}, new(bytes.Buffer)
 
@@ -66,6 +66,18 @@ type TransportUpdate struct {
 	Secret    string          `json:"secret,omitempty"`
 }
 
+func (u *TransportUpdate) GetConduitTransportRequest(conduitID string, shardID string) AssignConduitTransportRequest {
+	return AssignConduitTransportRequest{
+		ConduitID: conduitID,
+		Shards: []TransportShard{
+			{
+				ID:        shardID,
+				Transport: *u,
+			},
+		},
+	}
+}
+
 type AssignConduitTransportResponse struct {
 	Data []TransportShard `json:"data"`
 }
@@ -85,7 +97,7 @@ func (t *TwitchAPI) AssignConduitTransport(request AssignConduitTransportRequest
 		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusAccepted {
 		return nil, errors.New(fmt.Sprintf("Assign Conduit Transport unexpected status code: %d", res.StatusCode))
 	}
 

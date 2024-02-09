@@ -21,7 +21,7 @@ There are quick start examples in the `example` directory.
 
 - [x] Subscribe to a chat
 - [x] Websocket conduits
-- [ ] Well thought out spec for transport interface & helix client
+- [x] Well (enough for v0) thought out spec for transport interface & helix client
 - [x] Small example of how to use the library
 - [x] Documentation/comments
 

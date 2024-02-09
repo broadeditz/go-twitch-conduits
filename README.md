@@ -1,5 +1,5 @@
 # go-twitch-conduits
-Library interact with Twitch chat messages using conduits in Go.  
+Library to interact with Twitch chat messages using conduits in Go.  
 Since the IRC will become more limited soon, this library is designed be a replacement ingest for chatbots and the likes.
 
 ## Packages

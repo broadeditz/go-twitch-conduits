@@ -131,7 +131,19 @@ type EventSubscribeCondition struct {
 }
 
 type EventSubscribeResponse struct {
-	// TODO: implement
+	Data []struct {
+		ID        string                  `json:"id"`
+		Status    string                  `json:"status"`
+		Type      EventType               `json:"type"`
+		Version   string                  `json:"version"`
+		Condition EventSubscribeCondition `json:"condition"`
+		CreatedAt string                  `json:"created_at"`
+		Transport TransportUpdate         `json:"transport"`
+		Cost      int                     `json:"cost"`
+	}
+	Total        int `json:"total"`
+	MaxTotalCost int `json:"max_total_cost"`
+	TotalCost    int `json:"total_cost"`
 }
 
 // GetChatSubscribeRequest returns an EventSubscribeRequest for subscribing to chat events in the given channel, as the given user
@@ -176,12 +188,11 @@ func (t *TwitchAPI) EventSubscribe(request *EventSubscribeRequest) (*EventSubscr
 
 	fmt.Printf("%+v\n", string(data))
 
-	// TODO: implement
-	//var response EventSubscribeResponse
-	//err = json.NewDecoder(res.Body).Decode(&response)
-	//if err != nil {
-	//	return nil, err
-	//}
+	var response EventSubscribeResponse
+	err = json.NewDecoder(res.Body).Decode(&response)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	return &response, nil
 }

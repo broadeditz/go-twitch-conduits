@@ -11,7 +11,7 @@ Since IRC will become more limited soon, this library is designed be a replaceme
 ## Usage
 
 Generally speaking, there are 3 things you need to get started:  
-1. A Twitch application with the `user:read:chat`, `user:bot` and either the `channel:bot` scope or moderator status for the channels you're trying to join.
+1. A Twitch application with the `user:read:chat`, `user:bot` and either the `channel:bot` scope, or moderator status for the channels you're trying to join.
 2. An OAuth app token for the application, following the [Client credential grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow)
 3. The twitch user ID of the bot
   

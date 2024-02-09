@@ -178,15 +178,8 @@ func (t *TwitchAPI) EventSubscribe(request *EventSubscribeRequest) (*EventSubscr
 	}
 
 	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusAccepted {
-		// TODO: remove debug logging
-		fmt.Printf("%+v\n", *request)
 		return nil, errors.New(fmt.Sprintf("Event Subscribe unexpected status code: %d, %+v", res.StatusCode, res.Status))
 	}
-
-	data := make([]byte, res.ContentLength)
-	res.Body.Read(data)
-
-	fmt.Printf("%+v\n", string(data))
 
 	var response EventSubscribeResponse
 	err = json.NewDecoder(res.Body).Decode(&response)

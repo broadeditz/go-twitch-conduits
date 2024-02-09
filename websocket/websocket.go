@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Init starts the websocket connection and sets up the read loop
 func (c *Client) Init() error {
 	conn, _, err := websocket.DefaultDialer.Dial("wss://eventsub.wss.twitch.tv/ws", nil)
 	if err != nil {
@@ -43,6 +44,7 @@ func (c *Client) Init() error {
 	}
 }
 
+// readMessages continuously reads messages from the websocket connection
 func (c *Client) readMessages(done chan struct{}) {
 	defer close(done)
 	for {
@@ -55,6 +57,7 @@ func (c *Client) readMessages(done chan struct{}) {
 	}
 }
 
+// handleMessage unmarshals the message metadata and handles it based on the message type
 func (c *Client) handleMessage(data []byte) {
 	var message Message
 	if err := json.Unmarshal(data, &message); err != nil {
@@ -77,6 +80,7 @@ func (c *Client) handleMessage(data []byte) {
 	}
 }
 
+// handle subscription notifications
 func (c *Client) handleNotificationMessage(message Message) {
 	switch message.Metadata.SubscriptionType {
 	case helix.EventTypeChannelMessage:
@@ -87,6 +91,7 @@ func (c *Client) handleNotificationMessage(message Message) {
 	}
 }
 
+// handle chat messages
 func (c *Client) handleChannelMessage(data []byte) {
 	message, err := helix.ParseChannelMessage(data)
 	if err != nil {

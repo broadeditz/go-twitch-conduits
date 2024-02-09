@@ -35,7 +35,7 @@ func (t *TwitchAPI) CreateConduit(shardCount int) (*CreateConduitResponse, error
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.New(fmt.Sprintf("Create Conduit unexpected status code: %d", res.StatusCode))
+		return nil, errors.New(fmt.Sprintf("Create Conduit unexpected status code: %d, %+v", res.StatusCode, res.Status))
 	}
 
 	var response CreateConduitResponse
@@ -62,12 +62,13 @@ type TransportShard struct {
 type TransportUpdate struct {
 	Method    TransportMethod `json:"method"`
 	Callback  string          `json:"callback,omitempty"`
+	ConduitID string          `json:"conduit_id,omitempty"`
 	SessionID string          `json:"session_id,omitempty"`
 	Secret    string          `json:"secret,omitempty"`
 }
 
-func (u *TransportUpdate) GetConduitTransportRequest(conduitID string, shardID string) AssignConduitTransportRequest {
-	return AssignConduitTransportRequest{
+func (u *TransportUpdate) GetConduitTransportRequest(conduitID string, shardID string) *AssignConduitTransportRequest {
+	return &AssignConduitTransportRequest{
 		ConduitID: conduitID,
 		Shards: []TransportShard{
 			{
@@ -83,7 +84,7 @@ type AssignConduitTransportResponse struct {
 }
 
 // AssignConduitTransport sends a request to the Twitch API to assign a transport to shards of a conduit
-func (t *TwitchAPI) AssignConduitTransport(request AssignConduitTransportRequest) (*AssignConduitTransportResponse, error) {
+func (t *TwitchAPI) AssignConduitTransport(request *AssignConduitTransportRequest) (*AssignConduitTransportResponse, error) {
 	// PATCH to 'https://api.twitch.tv/helix/eventsub/conduits/shards' with authorization & client ID headers, request body
 	body := new(bytes.Buffer)
 	err := json.NewEncoder(body).Encode(request)
@@ -98,7 +99,7 @@ func (t *TwitchAPI) AssignConduitTransport(request AssignConduitTransportRequest
 	}
 
 	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusAccepted {
-		return nil, errors.New(fmt.Sprintf("Assign Conduit Transport unexpected status code: %d", res.StatusCode))
+		return nil, errors.New(fmt.Sprintf("Assign Conduit Transport unexpected status code: %d, %+v", res.StatusCode, res.Status))
 	}
 
 	var response AssignConduitTransportResponse
@@ -111,21 +112,47 @@ func (t *TwitchAPI) AssignConduitTransport(request AssignConduitTransportRequest
 }
 
 type EventSubscribeRequest struct {
-	Type      EventType `json:"type"`
-	Version   string    `json:"version"`
-	Condition struct {
-		BroadcasterUserID string `json:"broadcaster_user_id"`
-		ModeratorUserID   string `json:"moderator_user_id,omitempty"`
-		UserID            string `json:"user_id,omitempty"`
-	} `json:"condition"`
-	Transport TransportUpdate `json:"transport"`
+	Type      EventType               `json:"type"`
+	Version   string                  `json:"version"`
+	Condition EventSubscribeCondition `json:"condition"`
+	Transport TransportUpdate         `json:"transport"`
+}
+
+type EventSubscribeCondition struct {
+	BroadcasterUserID string `json:"broadcaster_user_id"`
+	ModeratorUserID   string `json:"moderator_user_id,omitempty"`
+	UserID            string `json:"user_id,omitempty"`
+}
+
+func (u *TransportUpdate) GetEventSubscribeRequest(t EventType, cond EventSubscribeCondition) *EventSubscribeRequest {
+	return &EventSubscribeRequest{
+		Type:      t,
+		Version:   "1",
+		Condition: cond,
+		Transport: *u,
+	}
 }
 
 type EventSubscribeResponse struct {
 	// TODO: implement
 }
 
-func (t *TwitchAPI) EventSubscribe(request EventSubscribeRequest) (*EventSubscribeResponse, error) {
+func GetChatSubscribeRequest(conduitID string, channelID, userID string) *EventSubscribeRequest {
+	return &EventSubscribeRequest{
+		Type:    EventTypeChannelMessage,
+		Version: "1",
+		Condition: EventSubscribeCondition{
+			BroadcasterUserID: channelID,
+			UserID:            userID,
+		},
+		Transport: TransportUpdate{
+			Method:    TransportMethodConduit,
+			ConduitID: conduitID,
+		},
+	}
+}
+
+func (t *TwitchAPI) EventSubscribe(request *EventSubscribeRequest) (*EventSubscribeResponse, error) {
 	// POST to 'https://api.twitch.tv/helix/eventsub/subscriptions' with authorization & client ID headers, request body
 	body := new(bytes.Buffer)
 	err := json.NewEncoder(body).Encode(request)
@@ -139,8 +166,10 @@ func (t *TwitchAPI) EventSubscribe(request EventSubscribeRequest) (*EventSubscri
 		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
-		return nil, errors.New(fmt.Sprintf("Event Subscribe unexpected status code: %d", res.StatusCode))
+	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusAccepted {
+		// TODO: remove debug logging
+		fmt.Printf("%+v\n", *request)
+		return nil, errors.New(fmt.Sprintf("Event Subscribe unexpected status code: %d, %+v", res.StatusCode, res.Status))
 	}
 
 	data := make([]byte, res.ContentLength)

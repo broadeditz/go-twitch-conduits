@@ -5,6 +5,7 @@ type TransportMethod string
 const (
 	TransportMethodWebhook   TransportMethod = "webhook"
 	TransportMethodWebsocket TransportMethod = "websocket"
+	TransportMethodConduit   TransportMethod = "conduit"
 )
 
 type EventType string

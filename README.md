@@ -10,7 +10,7 @@ Library to manage a Twitch chat ingest using conduits
 ## v0.0.1 requirements
 
 - [x] Subscribe to a chat
-- [ ] Websocket conduits
+- [x] Websocket conduits
 - [ ] Well thought out spec for transport interface & helix client
 - [ ] Small example of how to use the library
 - [ ] Documentation/comments

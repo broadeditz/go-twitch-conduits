@@ -10,6 +10,8 @@ Since the IRC will become more limited soon, this library is designed be a repla
 
 ## Usage
 
+    go get github.com/broadeditz/go-twitch-conduits
+  
 Generally speaking, there are 3 things you need to get started:  
 1. A Twitch application with the `user:read:chat`, `user:bot` scopes for your bot user. And either the `channel:bot` scope, or moderator status for the channels you're trying to join.
 2. An OAuth app token for the application, following the [Client credential grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow).
@@ -27,6 +29,7 @@ There are quick start examples in the `example` directory.
 
 ## Future roadmap
 
+- [ ] Joining/leaving/deleting/updating an existing conduit
 - [ ] Webhook conduits
 - [ ] Oauth flow to let users give permission for the bot to join their channel
 - [ ] Unit tests

@@ -146,8 +146,14 @@ type EventSubscribeResponse struct {
 	TotalCost    int `json:"total_cost"`
 }
 
-// GetChatSubscribeRequest returns an EventSubscribeRequest for subscribing to chat events in the given channel, as the given user
-func GetChatSubscribeRequest(conduitID string, channelID, userID string) *EventSubscribeRequest {
+// EventSubscribeChannelMessage subscribes to chat events in the given channel, as the given user. This is more or less the equivalent of JOIN in IRC.
+func (t *TwitchAPI) EventSubscribeChannelMessage(conduitID, channelID, userID string) (*EventSubscribeResponse, error) {
+	request := GetChannelMessageSubscribeRequest(conduitID, channelID, userID)
+	return t.EventSubscribe(request)
+}
+
+// GetChannelMessageSubscribeRequest returns an EventSubscribeRequest for subscribing to chat events in the given channel, as the given user
+func GetChannelMessageSubscribeRequest(conduitID, channelID, userID string) *EventSubscribeRequest {
 	return &EventSubscribeRequest{
 		Type:    EventTypeChannelMessage,
 		Version: "1",

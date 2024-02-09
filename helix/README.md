@@ -9,6 +9,7 @@ The twitch application of the clientID should have the `user:read:chat`, `user:b
 
 ## Missing features
 
+- Joining an existing conduit
 - Conduits don't get deleted when all shards are disconnected.
 - Sending messages to chat
 - Handling any other chat message type than channel chat messages, such as whispers, follows, etc.

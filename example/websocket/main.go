@@ -45,11 +45,8 @@ func main() {
 		panic(err)
 	}
 
-	// Get channel subscription request for the shard
-	subReq := helix.GetChatSubscribeRequest(res.Data[0].ID, userID, userID)
-
-	// Subscribe to a channel
-	_, err = api.EventSubscribe(subReq)
+	// Subscribe to the channel.chat.message event
+	_, err = api.EventSubscribeChannelMessage(res.Data[0].ID, userID, userID)
 	if err != nil {
 		panic(err)
 	}

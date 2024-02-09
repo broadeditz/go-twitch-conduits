@@ -13,7 +13,7 @@ Since IRC will become more limited soon, this library is designed be a replaceme
 - [x] Subscribe to a chat
 - [x] Websocket conduits
 - [ ] Well thought out spec for transport interface & helix client
-- [ ] Small example of how to use the library
+- [x] Small example of how to use the library
 - [ ] Documentation/comments
 
 ## Future roadmap

@@ -11,7 +11,7 @@ type Transport interface {
 	Ready() chan struct{}
 	// GetTransportUpdate returns a TransportUpdate used to update the conduit
 	GetTransportUpdate() *TransportUpdate
-	// OnChannelMessage defines the callback called when a channel message is received
+	// OnChannelMessage sets a callback to be called when a channel message is received, is not executed in gorourines. It is the responsibility of the caller to handle concurrency.
 	OnChannelMessage(func(message ChannelMessage))
 	// TODO: Add more event types
 }

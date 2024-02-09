@@ -21,6 +21,11 @@ func NewTwitchAPI(clientID, oauthToken, userID string) *TwitchAPI {
 	}
 }
 
+// UpdateOAuthToken updates the oauth token used by the TwitchAPI, used when the token expires
+func (t *TwitchAPI) UpdateOAuthToken(oauthToken string) {
+	t.oauthToken = oauthToken
+}
+
 // Do send a request to the given URL with the given method & body, adding authorization headers
 func (t *TwitchAPI) Do(method, url string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, body)

@@ -62,35 +62,28 @@ func (c *Client) handleMessage(data []byte) {
 		return
 	}
 
-	// TODO: clean this up
 	switch message.Metadata.MessageType {
+	// Notifications are subscription messages
 	case MessageTypeNotification:
-		switch message.Metadata.SubscriptionType {
-		case conduit.EventTypeChannelMessage:
-			c.handleChannelMessage(message.Payload)
-			return
-		default:
-			fmt.Printf("unknown notification type: %+v\n", string(data))
-		}
-
+		c.handleNotificationMessage(message)
+	// Welcome messages contain the session ID, and mean the websocket is ready
 	case MessageTypeWelcome:
-		var payload SystemMessagePayload
-		err := json.Unmarshal(message.Payload, &payload)
-		if err != nil {
-			fmt.Printf("error unmarshaling welcome message: %+v\n", err)
-			return
-		}
-		if payload.Session == nil {
-			fmt.Println("invalid welcome message")
-			return
-		}
-
-		c.sessionID = payload.Session.ID
-		close(c.ready)
+		c.handleWelcomeMessage(message.Payload)
 
 	case MessageTypeKeepalive:
+		//TODO: close on keepalive timeout
 	default:
 		fmt.Printf("unknown system message type: %+v\n", string(data))
+	}
+}
+
+func (c *Client) handleNotificationMessage(message Message) {
+	switch message.Metadata.SubscriptionType {
+	case conduit.EventTypeChannelMessage:
+		c.handleChannelMessage(message.Payload)
+
+	default:
+		fmt.Printf("unknown notification type: %+v\n", string(data))
 	}
 }
 
@@ -104,4 +97,21 @@ func (c *Client) handleChannelMessage(data []byte) {
 	if c.onChannelMessage != nil {
 		c.onChannelMessage(message)
 	}
+}
+
+// Welcome message requires us to set the session ID & mark the transport as ready
+func (c *Client) handleWelcomeMessage(data []byte) {
+	var payload SystemMessagePayload
+	err := json.Unmarshal(data, &payload)
+	if err != nil {
+		fmt.Printf("error unmarshaling welcome message: %+v\n", err)
+		return
+	}
+	if payload.Session == nil {
+		fmt.Println("invalid welcome message")
+		return
+	}
+
+	c.sessionID = payload.Session.ID
+	close(c.ready)
 }

@@ -1,21 +1,30 @@
 package websocket
 
-type SystemMessageType string
+import (
+	"encoding/json"
 
-const (
-	SystemMessageTypeWelcome   SystemMessageType = "session_welcome"
-	SystemMessageTypeKeepalive SystemMessageType = "session_keepalive"
+	"github.com/broadeditz/go-twitch-conduits/conduit"
 )
 
-type SystemMessage struct {
-	Metadata SystemMessageMetadata `json:"metadata"`
-	Payload  SystemMessagePayload  `json:"payload"`
+type MessageType string
+
+const (
+	MessageTypeWelcome      MessageType = "session_welcome"
+	MessageTypeKeepalive    MessageType = "session_keepalive"
+	MessageTypeNotification MessageType = "notification"
+)
+
+type Message struct {
+	Metadata MessageMetadata `json:"metadata"`
+	Payload  json.RawMessage `json:"payload"`
 }
 
-type SystemMessageMetadata struct {
-	MessageID        string            `json:"message_id"`
-	MessageType      SystemMessageType `json:"message_type"`
-	MessageTimestamp string            `json:"message_timestamp"`
+type MessageMetadata struct {
+	MessageID           string            `json:"message_id"`
+	MessageType         MessageType       `json:"message_type"`
+	MessageTimestamp    string            `json:"message_timestamp"`
+	SubscriptionType    conduit.EventType `json:"subscription_type,omitempty"`
+	SubscriptionVersion string            `json:"subscription_version,omitempty"`
 }
 
 type SystemMessagePayload struct {

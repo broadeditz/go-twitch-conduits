@@ -1,14 +1,13 @@
 package websocket
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/gorilla/websocket"
 
-	conduit2 "github.com/broadeditz/go-twitch-conduits/conduit"
+	"github.com/broadeditz/go-twitch-conduits/conduit"
 )
 
 func (c *Client) Init() error {
@@ -52,33 +51,51 @@ func (c *Client) readMessages(done chan struct{}) {
 			return
 		}
 
-		// TODO: remove debug logging
-		fmt.Printf("%+v\n", string(data))
+		c.handleMessage(data)
+	}
+}
 
-		reader := bytes.NewReader(data)
-		messageType, err := conduit2.ParseMessageType(reader)
+func (c *Client) handleMessage(data []byte) {
+	var message Message
+	if err := json.Unmarshal(data, &message); err != nil {
+		fmt.Printf("error unmarshaling system message: %+v\nsystem message: %+v\n", err, string(data))
+		return
+	}
+
+	// TODO: clean this up
+	switch message.Metadata.MessageType {
+	case MessageTypeNotification:
+		switch message.Metadata.SubscriptionType {
+		case conduit.EventTypeChannelMessage:
+			c.handleChannelMessage(message.Payload)
+			return
+		default:
+			fmt.Printf("unknown notification type: %+v\n", string(data))
+		}
+
+	case MessageTypeWelcome:
+		var payload SystemMessagePayload
+		err := json.Unmarshal(message.Payload, &payload)
 		if err != nil {
-			fmt.Printf("websocket parse error: %+v\n", err)
-			continue
+			fmt.Printf("error unmarshaling welcome message: %+v\n", err)
+			return
+		}
+		if payload.Session == nil {
+			fmt.Println("invalid welcome message")
+			return
 		}
 
-		switch messageType {
-		case conduit2.EventTypeChannelMessage:
-			c.handleChannelMessage(data)
+		c.sessionID = payload.Session.ID
+		close(c.ready)
 
-			// Null EventType is used for non-subscription messages, meaning system messages mostly
-		case conduit2.EventTypeNull:
-			c.handleSystemMessage(data)
-
-			// Unknown EventType means message type is not yet implemented
-		case conduit2.EventTypeUnknown:
-			fmt.Printf("unknown message type: %+v\n", string(data))
-		}
+	case MessageTypeKeepalive:
+	default:
+		fmt.Printf("unknown system message type: %+v\n", string(data))
 	}
 }
 
 func (c *Client) handleChannelMessage(data []byte) {
-	message, err := conduit2.ParseChannelMessage(data)
+	message, err := conduit.ParseChannelMessage(data)
 	if err != nil {
 		fmt.Printf("error: %+v\n", err)
 		return
@@ -87,38 +104,4 @@ func (c *Client) handleChannelMessage(data []byte) {
 	if c.onChannelMessage != nil {
 		c.onChannelMessage(message)
 	}
-}
-
-func (c *Client) handleSystemMessage(data []byte) {
-	var message SystemMessage
-	if err := json.Unmarshal(data, &message); err != nil {
-		fmt.Printf("error unmarshaling system message: %+v\nsystem message: %+v\n", err, string(data))
-		return
-	}
-
-	switch message.Metadata.MessageType {
-	case SystemMessageTypeWelcome:
-		if message.Payload.Session == nil {
-			fmt.Println("invalid welcome message")
-			return
-		}
-
-		c.sessionID = message.Payload.Session.ID
-		close(c.ready)
-
-	case SystemMessageTypeKeepalive:
-	default:
-		fmt.Printf("unknown system message type: %+v\n", string(data))
-	}
-}
-
-func (c *Client) GetTransportUpdate() *conduit2.TransportUpdate {
-	return &conduit2.TransportUpdate{
-		Method:    conduit2.TransportMethodWebsocket,
-		SessionID: c.sessionID,
-	}
-}
-
-func (c *Client) Close() {
-	close(c.interrupt)
 }

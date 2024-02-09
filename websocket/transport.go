@@ -24,6 +24,17 @@ func NewClient() *Client {
 	}
 }
 
+func (c *Client) Close() {
+	close(c.interrupt)
+}
+
+func (c *Client) GetTransportUpdate() *conduit.TransportUpdate {
+	return &conduit.TransportUpdate{
+		Method:    conduit.TransportMethodWebsocket,
+		SessionID: c.sessionID,
+	}
+}
+
 func (c *Client) Ready() chan struct{} {
 	return c.ready
 }

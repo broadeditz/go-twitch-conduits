@@ -130,6 +130,7 @@ type EventSubscribeCondition struct {
 	UserID            string `json:"user_id,omitempty"`
 }
 
+// EventSubscribeResponse is the response the Twitch API returns when subscribing to an eventSub event
 type EventSubscribeResponse struct {
 	Data []struct {
 		ID        string                  `json:"id"`

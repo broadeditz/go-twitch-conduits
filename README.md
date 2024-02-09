@@ -3,7 +3,7 @@ Library to interact with Twitch chat messages using conduits in Go.
 Since the IRC will become more limited soon, this library is designed be a replacement ingest for chatbots and the likes.
 
 ## Packages
-- [helix](./helix): Package to manage subscribe to chat messages in conduits using the Twitch Helix API
+- [helix](./helix): Package to subscribe to chat messages through conduits using the Twitch Helix API
 - [webhook](./webhook): Logic for webhook conduits, implementing the `Transport` interface (TODO)
 - [websocket](./websocket): Logic for websocket conduits, implementing the `Transport` interface
 - [oauth](./oauth): Oauth flow to let users give permission for the bot to join their channel (TODO)

@@ -1,5 +1,5 @@
 # go-twitch-conduits
-Library to subscribe to Twitch chat messages using conduits in Go
+Library to subscribe to Twitch chat messages using conduits in Go.  
 Since IRC will become more limited soon, this library is designed be a replacement ingest for chatbots and the likes.
 
 ## Packages

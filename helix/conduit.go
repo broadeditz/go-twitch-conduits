@@ -19,10 +19,11 @@ type CreateConduitResponse struct {
 // CreateConduit sends a request to the Twitch API to create a conduit with the given shard count
 func (t *TwitchAPI) CreateConduit(shardCount int) (*CreateConduitResponse, error) {
 	// POST to 'https://api.twitch.tv/helix/eventsub/conduits' with authorization & client ID headers, shard count in body
-	requestData, body := map[string]int{
+	requestData := map[string]int{
 		"shard_count": shardCount,
-	}, new(bytes.Buffer)
+	}
 
+	body := new(bytes.Buffer)
 	err := json.NewEncoder(body).Encode(requestData)
 	if err != nil {
 		return nil, err

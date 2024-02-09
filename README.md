@@ -23,7 +23,7 @@ There are quick start examples in the `example` directory.
 - [x] Websocket conduits
 - [ ] Well thought out spec for transport interface & helix client
 - [x] Small example of how to use the library
-- [ ] Documentation/comments
+- [x] Documentation/comments
 
 ## Future roadmap
 

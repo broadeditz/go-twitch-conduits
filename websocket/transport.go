@@ -3,7 +3,7 @@ package websocket
 import (
 	"github.com/gorilla/websocket"
 
-	"github.com/broadeditz/go-twitch-conduits/conduit"
+	"github.com/broadeditz/go-twitch-conduits/helix"
 )
 
 type Client struct {
@@ -14,7 +14,7 @@ type Client struct {
 	ready     chan struct{}
 	interrupt chan struct{}
 
-	onChannelMessage func(message conduit.ChannelMessage)
+	onChannelMessage func(message helix.ChannelMessage)
 }
 
 func NewClient() *Client {
@@ -28,9 +28,9 @@ func (c *Client) Close() {
 	close(c.interrupt)
 }
 
-func (c *Client) GetTransportUpdate() *conduit.TransportUpdate {
-	return &conduit.TransportUpdate{
-		Method:    conduit.TransportMethodWebsocket,
+func (c *Client) GetTransportUpdate() *helix.TransportUpdate {
+	return &helix.TransportUpdate{
+		Method:    helix.TransportMethodWebsocket,
 		SessionID: c.sessionID,
 	}
 }
@@ -39,6 +39,6 @@ func (c *Client) Ready() chan struct{} {
 	return c.ready
 }
 
-func (c *Client) OnChannelMessage(f func(message conduit.ChannelMessage)) {
+func (c *Client) OnChannelMessage(f func(message helix.ChannelMessage)) {
 	c.onChannelMessage = f
 }

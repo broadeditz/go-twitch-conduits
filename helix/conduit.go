@@ -1,4 +1,4 @@
-package conduit
+package helix
 
 import (
 	"bytes"
@@ -111,6 +111,7 @@ func (t *TwitchAPI) AssignConduitTransport(request *AssignConduitTransportReques
 	return &response, nil
 }
 
+// EventSubscribeRequest is the request body for subscribing to an eventSub event
 type EventSubscribeRequest struct {
 	Type      EventType               `json:"type"`
 	Version   string                  `json:"version"`
@@ -118,25 +119,18 @@ type EventSubscribeRequest struct {
 	Transport TransportUpdate         `json:"transport"`
 }
 
+// EventSubscribeCondition contains the user data for the event subscription
 type EventSubscribeCondition struct {
 	BroadcasterUserID string `json:"broadcaster_user_id"`
 	ModeratorUserID   string `json:"moderator_user_id,omitempty"`
 	UserID            string `json:"user_id,omitempty"`
 }
 
-func (u *TransportUpdate) GetEventSubscribeRequest(t EventType, cond EventSubscribeCondition) *EventSubscribeRequest {
-	return &EventSubscribeRequest{
-		Type:      t,
-		Version:   "1",
-		Condition: cond,
-		Transport: *u,
-	}
-}
-
 type EventSubscribeResponse struct {
 	// TODO: implement
 }
 
+// GetChatSubscribeRequest returns an EventSubscribeRequest for subscribing to chat events in the given channel, as the given user
 func GetChatSubscribeRequest(conduitID string, channelID, userID string) *EventSubscribeRequest {
 	return &EventSubscribeRequest{
 		Type:    EventTypeChannelMessage,
@@ -152,6 +146,7 @@ func GetChatSubscribeRequest(conduitID string, channelID, userID string) *EventS
 	}
 }
 
+// EventSubscribe sends a request to the Twitch API to subscribe to an eventSub event
 func (t *TwitchAPI) EventSubscribe(request *EventSubscribeRequest) (*EventSubscribeResponse, error) {
 	// POST to 'https://api.twitch.tv/helix/eventsub/subscriptions' with authorization & client ID headers, request body
 	body := new(bytes.Buffer)

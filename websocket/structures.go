@@ -3,7 +3,7 @@ package websocket
 import (
 	"encoding/json"
 
-	"github.com/broadeditz/go-twitch-conduits/conduit"
+	"github.com/broadeditz/go-twitch-conduits/helix"
 )
 
 type MessageType string
@@ -20,11 +20,11 @@ type Message struct {
 }
 
 type MessageMetadata struct {
-	MessageID           string            `json:"message_id"`
-	MessageType         MessageType       `json:"message_type"`
-	MessageTimestamp    string            `json:"message_timestamp"`
-	SubscriptionType    conduit.EventType `json:"subscription_type,omitempty"`
-	SubscriptionVersion string            `json:"subscription_version,omitempty"`
+	MessageID           string          `json:"message_id"`
+	MessageType         MessageType     `json:"message_type"`
+	MessageTimestamp    string          `json:"message_timestamp"`
+	SubscriptionType    helix.EventType `json:"subscription_type,omitempty"`
+	SubscriptionVersion string          `json:"subscription_version,omitempty"`
 }
 
 type SystemMessagePayload struct {

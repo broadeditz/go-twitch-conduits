@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gorilla/websocket"
+	"github.com/broadeditz/go-twitch-conduits/helix"
 
-	"github.com/broadeditz/go-twitch-conduits/conduit"
+	"github.com/gorilla/websocket"
 )
 
 func (c *Client) Init() error {
@@ -79,7 +79,7 @@ func (c *Client) handleMessage(data []byte) {
 
 func (c *Client) handleNotificationMessage(message Message) {
 	switch message.Metadata.SubscriptionType {
-	case conduit.EventTypeChannelMessage:
+	case helix.EventTypeChannelMessage:
 		c.handleChannelMessage(message.Payload)
 
 	default:
@@ -88,7 +88,7 @@ func (c *Client) handleNotificationMessage(message Message) {
 }
 
 func (c *Client) handleChannelMessage(data []byte) {
-	message, err := conduit.ParseChannelMessage(data)
+	message, err := helix.ParseChannelMessage(data)
 	if err != nil {
 		fmt.Printf("error: %+v\n", err)
 		return

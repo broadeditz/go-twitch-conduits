@@ -1,4 +1,9 @@
-package conduit
+package helix
+
+type ChannelMessage struct {
+	Subscription Subscription        `json:"subscription"`
+	Event        ChannelMessageEvent `json:"event"`
+}
 
 type Subscription struct {
 	ID        string    `json:"id"`
@@ -15,11 +20,6 @@ type Subscription struct {
 	} `json:"transport"`
 	CreatedAt string `json:"created_at"`
 	Cost      int    `json:"cost"`
-}
-
-type ChannelMessage struct {
-	Subscription Subscription        `json:"subscription"`
-	Event        ChannelMessageEvent `json:"event"`
 }
 
 type ChannelMessageEvent struct {

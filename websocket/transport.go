@@ -31,7 +31,7 @@ func (c *Client) Close() {
 	close(c.interrupt)
 }
 
-// GetTransportUpdate returns a TransportUpdate for the websocket transport, used for updating conduits
+// GetTransportUpdate returns a helix.TransportUpdate for the websocket transport, used for updating conduits
 func (c *Client) GetTransportUpdate() *helix.TransportUpdate {
 	return &helix.TransportUpdate{
 		Method:    helix.TransportMethodWebsocket,

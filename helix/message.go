@@ -1,10 +1,12 @@
 package helix
 
+// ChannelMessage is the structure of a chat message received through a conduit
 type ChannelMessage struct {
 	Subscription Subscription        `json:"subscription"`
 	Event        ChannelMessageEvent `json:"event"`
 }
 
+// Subscription is the structure for subscription data of a message received through a conduit
 type Subscription struct {
 	ID        string    `json:"id"`
 	Status    string    `json:"status"`
@@ -22,6 +24,7 @@ type Subscription struct {
 	Cost      int    `json:"cost"`
 }
 
+// ChannelMessageEvent is the structure for the event data of a chat message received through a conduit
 type ChannelMessageEvent struct {
 	BroadcasterUserID    string `json:"broadcaster_user_id"`
 	BroadcasterUserLogin string `json:"broadcaster_user_login"`

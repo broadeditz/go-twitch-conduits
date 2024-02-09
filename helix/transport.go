@@ -9,7 +9,7 @@ type Transport interface {
 	// Ready returns the ready channel, which is closed when the transport is ready to be used.
 	// Reading from the channel, after calling Init, will block until the transport is ready.
 	Ready() chan struct{}
-	// GetTransportUpdate returns a transport update used to update the conduit
+	// GetTransportUpdate returns a TransportUpdate used to update the conduit
 	GetTransportUpdate() *TransportUpdate
 	// OnChannelMessage defines the callback called when a channel message is received
 	OnChannelMessage(func(message ChannelMessage))

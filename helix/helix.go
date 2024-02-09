@@ -5,12 +5,14 @@ import (
 	"net/http"
 )
 
+// TwitchAPI is a struct used to interact with the Twitch helix API
 type TwitchAPI struct {
 	clientID   string
 	oauthToken string
 	userID     string
 }
 
+// NewTwitchAPI returns a new instance of the TwitchAPI configured with the given clientID, oauthToken, and userID
 func NewTwitchAPI(clientID, oauthToken, userID string) *TwitchAPI {
 	return &TwitchAPI{
 		clientID:   clientID,

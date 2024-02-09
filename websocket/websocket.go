@@ -83,7 +83,7 @@ func (c *Client) handleNotificationMessage(message Message) {
 		c.handleChannelMessage(message.Payload)
 
 	default:
-		fmt.Printf("unknown notification type: %+v\n", string(data))
+		fmt.Printf("unknown notification type: %+v\n", message.Metadata.SubscriptionType)
 	}
 }
 

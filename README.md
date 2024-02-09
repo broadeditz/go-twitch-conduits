@@ -4,8 +4,8 @@ Since the IRC will become more limited soon, this library is designed be a repla
 
 ## Packages
 - [helix](./helix): Package to subscribe to chat messages through conduits using the Twitch Helix API
-- [webhook](./webhook): Logic for webhook conduits, implementing the `Transport` interface (TODO)
-- [websocket](./websocket): Logic for websocket conduits, implementing the `Transport` interface
+- [webhook](./webhook): Logic for webhook conduits, implementing the `helix.Transport` interface (TODO)
+- [websocket](./websocket): Logic for websocket conduits, implementing the `helix.Transport` interface
 - [oauth](./oauth): Oauth flow to let users give permission for the bot to join their channel (TODO)
 
 ## Usage
@@ -19,13 +19,12 @@ Generally speaking, there are 3 things you need to get started:
   
 There are quick start examples in the `example` directory.
 
-## v0.0.1 requirements
+## v0.0.1 features
 
-- [x] Subscribe to a chat
+- [x] Subscribe to a chat (or more)
 - [x] Websocket conduits
-- [x] Well (enough for v0) thought out spec for transport interface & helix client
+- [x] Transport interface for conduits & helix client
 - [x] Small example of how to use the library
-- [x] Documentation/comments
 
 ## Future roadmap
 
@@ -35,3 +34,4 @@ There are quick start examples in the `example` directory.
 - [ ] Unit tests
 - [ ] Single optional wrapper combining helix & transport into a simple to use package
 - [ ] Send messages to chat
+- [ ] v1.0.0: refactor helix to be more user-friendly

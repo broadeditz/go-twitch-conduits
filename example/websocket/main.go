@@ -33,9 +33,15 @@ func main() {
 		errChan <- transport.Init()
 	}()
 
-	// wait for the transport to be ready
-	<-transport.Ready()
-
+	select {
+	// wait for the transport to be ready, or the transport to fail to initialize
+	case <-transport.Ready():
+	case err := <-errChan:
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
 	// Get the conduit update request for the shard
 	req := transport.GetTransportUpdate().GetConduitTransportRequest(res.Data[0].ID, "0")
 

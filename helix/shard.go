@@ -8,6 +8,46 @@ import (
 	"net/http"
 )
 
+// GetConduitsShardsResponse is the response the Twitch API returns when getting a list of shards for a conduit
+type GetConduitsShardsResponse struct {
+	Data       []GetConduitsShardsData `json:"data"`
+	Pagination struct {
+		Cursor string `json:"cursor"`
+	} `json:"pagination"`
+}
+
+// GetConduitsShardsData is the data for a shard of a conduit
+type GetConduitsShardsData struct {
+	ID        string          `json:"id"`
+	Status    string          `json:"status"`
+	Transport TransportUpdate `json:"transport"`
+}
+
+// GetConduitShards gets a lists of all shards for a conduit.
+func (t *TwitchAPI) GetConduitShards(conduitID string) (*GetConduitsShardsResponse, error) {
+	// GET to 'https://api.twitch.tv/helix/eventsub/conduits/shards'
+	res, err := t.Do(
+		http.MethodGet,
+		fmt.Sprintf("https://api.twitch.tv/helix/eventsub/conduits/shards?conduit_id=%v", conduitID),
+		nil)
+	defer res.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, errors.New(fmt.Sprintf("Get Conduits shards unexpected status code: %d, %+v", res.StatusCode, res.Status))
+	}
+
+	var response GetConduitsShardsResponse
+	err = json.NewDecoder(res.Body).Decode(&response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
 // AssignConduitTransportRequest is the request body for assigning a transport to shards of a conduit
 type AssignConduitTransportRequest struct {
 	ConduitID string           `json:"conduit_id"`

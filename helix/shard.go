@@ -48,6 +48,7 @@ func (t *TwitchAPI) GetConduitShards(conduitID string) (*GetConduitsShardsRespon
 	return &response, nil
 }
 
+// TODO: for v1.0.0 rename this to for UpdateConduitShards method instead
 // AssignConduitTransportRequest is the request body for assigning a transport to shards of a conduit
 type AssignConduitTransportRequest struct {
 	ConduitID string           `json:"conduit_id"`
@@ -62,6 +63,7 @@ type TransportShard struct {
 }
 
 // TransportUpdate contains the data of the transport for a conduit shard
+// TODO: for v1.0.0 rename this to make more sense since it's used for more puposes than just updating a transport
 type TransportUpdate struct {
 	Method         TransportMethod `json:"method"`
 	Callback       string          `json:"callback,omitempty"`
@@ -73,6 +75,7 @@ type TransportUpdate struct {
 }
 
 // GetConduitTransportRequest returns an AssignConduitTransportRequest for assigning a transport to a conduit using TwitchAPI.AssignConduitTransport
+// TODO: for v1.0.0 rename
 func (u *TransportUpdate) GetConduitTransportRequest(conduitID string, shardID string) *AssignConduitTransportRequest {
 	return &AssignConduitTransportRequest{
 		ConduitID: conduitID,
@@ -90,9 +93,8 @@ type AssignConduitTransportResponse struct {
 	Data []TransportShard `json:"data"`
 }
 
-// AssignConduitTransport sends a request to the Twitch API to assign a transport to shards of a conduit
-func (t *TwitchAPI) AssignConduitTransport(request *AssignConduitTransportRequest) (*AssignConduitTransportResponse, error) {
-	// PATCH to 'https://api.twitch.tv/helix/eventsub/conduits/shards' with authorization & client ID headers, request body
+// UpdateConduitShards updates shard(s) for a conduit.
+func (t *TwitchAPI) UpdateConduitShards(request *AssignConduitTransportRequest) (*AssignConduitTransportResponse, error) {
 	body := new(bytes.Buffer)
 	err := json.NewEncoder(body).Encode(request)
 	if err != nil {
@@ -116,4 +118,10 @@ func (t *TwitchAPI) AssignConduitTransport(request *AssignConduitTransportReques
 	}
 
 	return &response, nil
+}
+
+// AssignConduitTransport sends a request to the Twitch API to assign a transport to shards of a conduit. Is an alias of UpdateConduitShards
+// TODO: for v1.0.0 remove in favor of UpdateConduitShards
+func (t *TwitchAPI) AssignConduitTransport(request *AssignConduitTransportRequest) (*AssignConduitTransportResponse, error) {
+	return t.UpdateConduitShards(request)
 }

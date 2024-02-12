@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/broadeditz/go-twitch-conduits/helix"
 	"github.com/broadeditz/go-twitch-conduits/websocket"
@@ -58,10 +59,21 @@ func main() {
 	}
 
 	// listen for system signal to exit
-	close := make(chan os.Signal)
-	signal.Notify(close, os.Interrupt, os.Kill)
+	sig := make(chan os.Signal)
+	signal.Notify(sig, os.Interrupt, os.Kill)
 
-	for {
+	select {
+	case err := <-errChan:
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Graceful shut down\n")
+		return
+
+	case <-sig:
+		transport.Close()
+
 		select {
 		case err := <-errChan:
 			if err != nil {
@@ -69,10 +81,9 @@ func main() {
 			}
 
 			fmt.Printf("Graceful shut down\n")
-			return
 
-		case <-close:
-			transport.Close()
+		case <-time.NewTimer(5 * time.Second).C:
+			fmt.Printf("Force shut down\n")
 		}
 	}
 }
